@@ -1,4 +1,4 @@
-# Acme Tech Services — Homepage
+# Technologicallysimple — Homepage
 
 A responsive homepage for a tech service provider. Built with HTML, CSS, and JavaScript — no frameworks required.
 
