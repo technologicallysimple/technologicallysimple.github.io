@@ -1,1 +1,323 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Report: My Tech Solutions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Slate Gray & Powder Blue -->
+    <!-- Application Structure Plan: The application is structured as a single-page interactive dashboard rather than a traditional, linear website. This design choice transforms the static service listing into an engaging exploration tool. The core is the "Our Services" dashboard, which uses interactive controls to dynamically update a visualization and detailed text block. This allows users to actively compare and understand services in a non-linear fashion, which is more effective for data consumption than passive reading. The flow is: Hero -> Interactive Service Dashboard -> Project Showcase -> Contact. This guides the user from a high-level value proposition to tangible examples and a final call-to-action, improving comprehension and engagement. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: List of 3 Services (Web Dev, Cloud, IT Consulting). Goal: Inform & Compare. Viz/Presentation Method: An interactive dashboard with buttons to select a service. An associated chart and text block update dynamically. Interaction: User clicks a service button. Justification: This transforms a passive list into an active exploration, allowing users to directly compare the value propositions of each service in a visually engaging format. Library/Method: Chart.js for canvas-based charts, Vanilla JS for state handling.
+        - Report Info: Web Development Service. Goal: Demonstrate value. Viz/Presentation Method: Bar Chart. Interaction: View chart on service selection. Justification: A bar chart effectively compares key performance metrics (Performance, SEO, etc.), making the abstract benefits of good development tangible. Library/Method: Chart.js (Canvas).
+        - Report Info: Cloud Solutions Service. Goal: Show components of a whole. Viz/Presentation Method: Doughnut Chart. Interaction: View chart on service selection. Justification: A doughnut chart is ideal for showing the proportional benefits (Scalability, Security, etc.) that make up the complete cloud offering. Library/Method: Chart.js (Canvas).
+        - Report Info: IT Consulting Service. Goal: Display multi-faceted expertise. Viz/Presentation Method: Radar Chart. Interaction: View chart on service selection. Justification: A radar chart excels at displaying strengths across multiple, distinct areas (Strategy, Security, etc.), perfectly representing the holistic nature of consulting. Library/Method: Chart.js (Canvas).
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 40vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .service-btn.active {
+            background-color: #3b82f6;
+            color: #ffffff;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 border-b border-slate-200">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <span class="text-2xl font-bold text-slate-900">My Tech Solutions</span>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#home" class="text-slate-600 hover:bg-slate-200 hover:text-slate-900 px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <a href="#services" class="text-slate-600 hover:bg-slate-200 hover:text-slate-900 px-3 py-2 rounded-md text-sm font-medium">Services</a>
+                        <a href="#projects" class="text-slate-600 hover:bg-slate-200 hover:text-slate-900 px-3 py-2 rounded-md text-sm font-medium">Projects</a>
+                        <a href="#contact" class="text-slate-600 hover:bg-slate-200 hover:text-slate-900 px-3 py-2 rounded-md text-sm font-medium">Contact</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="bg-white">
+            <div class="max-w-7xl mx-auto py-24 px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl md:text-6xl">
+                    <span class="block">Expert Tech Services</span>
+                    <span class="block text-blue-600">for Your Business Growth</span>
+                </h1>
+                <p class="mt-6 max-w-lg mx-auto text-xl text-slate-600">
+                    We provide innovative and reliable technology solutions to help your business thrive in the digital age. Explore our services to see how we can help.
+                </p>
+                <div class="mt-8 flex justify-center">
+                    <div class="inline-flex rounded-md shadow">
+                        <a href="#services" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                            Explore Services
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="services" class="py-20 bg-slate-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-extrabold text-slate-900 sm:text-4xl">Interactive Services Dashboard</h2>
+                    <p class="mt-4 text-lg text-slate-600">
+                        This dashboard provides an interactive overview of our core offerings. Select a service below to dynamically load its key focus areas and a detailed description. This allows for a direct comparison of how our different solutions can bring value to your business.
+                    </p>
+                </div>
+
+                <div class="mt-12 flex justify-center flex-wrap gap-3">
+                    <button class="service-btn px-5 py-2 text-sm font-medium text-slate-700 bg-white rounded-full shadow-sm hover:bg-slate-200 transition-colors active" data-service="web">Web Development</button>
+                    <button class="service-btn px-5 py-2 text-sm font-medium text-slate-700 bg-white rounded-full shadow-sm hover:bg-slate-200 transition-colors" data-service="cloud">Cloud Solutions</button>
+                    <button class="service-btn px-5 py-2 text-sm font-medium text-slate-700 bg-white rounded-full shadow-sm hover:bg-slate-200 transition-colors" data-service="it">IT Consulting</button>
+                </div>
+
+                <div class="mt-12 bg-white rounded-xl shadow-lg overflow-hidden lg:grid lg:grid-cols-2 lg:gap-4">
+                    <div class="p-8 lg:p-12">
+                        <h3 id="service-title" class="text-2xl font-bold text-slate-900">Web Development</h3>
+                        <p id="service-description" class="mt-4 text-slate-600">
+                            Building modern, responsive, and high-performance websites is our forte. We focus on creating exceptional user experiences that are not only visually appealing but also technically sound. Our development process prioritizes clean code, scalability, and robust security measures to ensure your digital presence is powerful and reliable.
+                        </p>
+                    </div>
+                    <div class="p-8 bg-slate-50 flex items-center justify-center">
+                        <div class="chart-container">
+                            <canvas id="serviceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="projects" class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-extrabold text-slate-900 sm:text-4xl">Project Showcase</h2>
+                    <p class="mt-4 text-lg text-slate-600">
+                        We deliver tangible results. This section highlights case studies from our key service areas, demonstrating the real-world impact of our technology solutions on businesses like yours. These examples showcase our commitment to quality and innovation.
+                    </p>
+                </div>
+                <div class="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                    <div class="bg-slate-50 rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-bold text-blue-600">E-Commerce Platform</h3>
+                        <p class="text-sm font-medium text-slate-500 mb-3">Service: Web Development</p>
+                        <p class="text-slate-600">Developed a high-traffic e-commerce site with a 50% increase in conversion rates and a 2-second average page load time, enhancing user experience and driving sales.</p>
+                    </div>
+                    <div class="bg-slate-50 rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-bold text-blue-600">Cloud Migration</h3>
+                        <p class="text-sm font-medium text-slate-500 mb-3">Service: Cloud Solutions</p>
+                        <p class="text-slate-600">Migrated a client's entire on-premise infrastructure to a hybrid cloud environment, resulting in a 40% reduction in operational costs and 99.99% uptime.</p>
+                    </div>
+                    <div class="bg-slate-50 rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-bold text-blue-600">Security Overhaul</h3>
+                        <p class="text-sm font-medium text-slate-500 mb-3">Service: IT Consulting</p>
+                        <p class="text-slate-600">Conducted a full security audit and implemented a new cybersecurity framework, reducing vulnerability exposure by 95% and ensuring compliance with industry regulations.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="py-20 bg-slate-100">
+            <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-extrabold text-slate-900 sm:text-4xl">Get in Touch</h2>
+                    <p class="mt-4 text-lg text-slate-600">
+                        Ready to start your next project with us? Contact us today to discuss your needs and let's build something great together.
+                    </p>
+                </div>
+                <form class="mt-12">
+                    <div class="grid grid-cols-1 gap-y-6">
+                        <div>
+                            <label for="name" class="sr-only">Full name</label>
+                            <input type="text" name="name" id="name" autocomplete="name" class="block w-full shadow-sm py-3 px-4 placeholder-slate-500 focus:ring-blue-500 focus:border-blue-500 border-slate-300 rounded-md" placeholder="Full name">
+                        </div>
+                        <div>
+                            <label for="email" class="sr-only">Email</label>
+                            <input id="email" name="email" type="email" autocomplete="email" class="block w-full shadow-sm py-3 px-4 placeholder-slate-500 focus:ring-blue-500 focus:border-blue-500 border-slate-300 rounded-md" placeholder="Email">
+                        </div>
+                        <div>
+                            <label for="message" class="sr-only">Message</label>
+                            <textarea id="message" name="message" rows="4" class="block w-full shadow-sm py-3 px-4 placeholder-slate-500 focus:ring-blue-500 focus:border-blue-500 border border-slate-300 rounded-md" placeholder="Message"></textarea>
+                        </div>
+                        <div>
+                            <button type="submit" class="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                Send Message
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-900">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-base text-slate-400">&copy; 2024 My Tech Solutions. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const serviceData = {
+                web: {
+                    title: 'Web Development',
+                    description: 'Building modern, responsive, and high-performance websites is our forte. We focus on creating exceptional user experiences that are not only visually appealing but also technically sound. Our development process prioritizes clean code, scalability, and robust security measures to ensure your digital presence is powerful and reliable.',
+                    chartType: 'bar',
+                    labels: ['Performance', 'Responsiveness', 'SEO', 'Security', 'Scalability'],
+                    data: [95, 98, 92, 97, 90],
+                    backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                },
+                cloud: {
+                    title: 'Cloud Solutions',
+                    description: 'We specialize in implementing scalable and secure cloud infrastructure. Whether you are migrating to the cloud or optimizing your existing setup, we provide solutions that enhance performance, reduce costs, and improve reliability. Our expertise covers major platforms like AWS, Azure, and Google Cloud.',
+                    chartType: 'doughnut',
+                    labels: ['Scalability', 'Security', 'Cost-Efficiency', 'Reliability', 'Performance'],
+                    data: [30, 25, 20, 15, 10],
+                    backgroundColor: ['rgba(59, 130, 246, 0.7)', 'rgba(34, 197, 94, 0.7)', 'rgba(234, 179, 8, 0.7)', 'rgba(249, 115, 22, 0.7)', 'rgba(139, 92, 246, 0.7)'],
+                    borderColor: '#ffffff',
+                },
+                it: {
+                    title: 'IT Consulting',
+                    description: 'Our IT consulting services provide you with expert advice to optimize your technology stack and align it with your business goals. We help you navigate complex tech challenges, from strategic planning and cybersecurity to infrastructure management, ensuring your IT investments deliver maximum value.',
+                    chartType: 'radar',
+                    labels: ['Strategy', 'Security', 'Infrastructure', 'Optimization', 'Compliance'],
+                    data: [90, 95, 85, 92, 88],
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                }
+            };
+
+            const ctx = document.getElementById('serviceChart').getContext('2d');
+            let serviceChart;
+
+            function updateDashboard(serviceKey) {
+                const data = serviceData[serviceKey];
+
+                document.getElementById('service-title').textContent = data.title;
+                document.getElementById('service-description').textContent = data.description;
+                
+                document.querySelectorAll('.service-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if(btn.dataset.service === serviceKey) {
+                        btn.classList.add('active');
+                    }
+                });
+
+                if (serviceChart) {
+                    serviceChart.destroy();
+                }
+                
+                const chartOptions = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: data.chartType !== 'bar' && data.chartType !== 'radar',
+                            position: 'bottom',
+                        },
+                        tooltip: {
+                            enabled: true,
+                        }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            ticks: {
+                                backdropColor: 'transparent',
+                                stepSize: 20
+                            }
+                        },
+                        y: {
+                           display: data.chartType === 'bar',
+                           beginAtZero: true,
+                           grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                           }
+                        },
+                        x: {
+                           display: data.chartType === 'bar',
+                           grid: {
+                                display: false
+                           }
+                        }
+                    }
+                };
+                
+                if(data.chartType === 'bar') {
+                    chartOptions.scales.y.max = 100;
+                }
+                if(data.chartType === 'radar') {
+                    chartOptions.scales.r.min = 0;
+                    chartOptions.scales.r.max = 100;
+                }
+
+
+                serviceChart = new Chart(ctx, {
+                    type: data.chartType,
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: data.title,
+                            data: data.data,
+                            backgroundColor: data.backgroundColor,
+                            borderColor: data.borderColor,
+                            borderWidth: data.chartType === 'doughnut' ? 3 : 2,
+                            pointBackgroundColor: data.borderColor,
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: data.borderColor,
+                        }]
+                    },
+                    options: chartOptions
+                });
+            }
+
+            document.querySelectorAll('.service-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const serviceKey = e.target.dataset.service;
+                    updateDashboard(serviceKey);
+                });
+            });
+
+            updateDashboard('web');
+        });
+    </script>
+</body>
+</html>
 
